@@ -17,10 +17,10 @@ namespace JiraAPI.Controller
         }
 
         [HttpGet("Jira/GetSprintChampiones")]
-        public IActionResult GetSprintChampiones(string projectName,string sprintName)
+        public IActionResult GetSprintChampiones(string projectName,string sprintName, string teamSpecialtyName)
         {
             List<UsersModel> userList = new List<UsersModel>();
-            List<Issue> sprintIssues = GetSprintIssues(projectName, sprintName);
+            List<Issue> sprintIssues = GetSprintIssues(projectName, sprintName, teamSpecialtyName);
             var issueGroupedByAssigneeUser = sprintIssues
                 .Where(a=>a.AssigneeUser?.DisplayName != "" && a.AssigneeUser?.DisplayName != null)
                 .GroupBy(y => y.AssigneeUser?.DisplayName).ToList();
@@ -44,10 +44,10 @@ namespace JiraAPI.Controller
             return Ok(sprintChampionesList);
         }
 
-        private List<Issue> GetSprintIssues(string projectName, string sprintName = "")
+        private List<Issue> GetSprintIssues(string projectName, string sprintName = "", string teamSpecialtyName = "")
         {
             Jira jiraClient = Jira.CreateRestClient(appConfiguration.JiraURL, appConfiguration.JiraUsername, appConfiguration.JiraToken, new JiraRestClientSettings());
-            string jqlString = PrepareJqlbyDates(projectName, sprintName);
+            string jqlString = PrepareJqlbyDates(projectName, sprintName, teamSpecialtyName);
             IssueSearchOptions options = new IssueSearchOptions(jqlString);
             options.StartAt = 0;
             options.MaxIssuesPerRequest = jiraClient.Issues.GetIssuesFromJqlAsync(options).Result.TotalItems;
@@ -56,12 +56,15 @@ namespace JiraAPI.Controller
             issuesList.AddRange(partialPullRequests);
             return issuesList;
         }
-        private string PrepareJqlbyDates(string project, string sprint)
+        private string PrepareJqlbyDates(string project, string sprint, string teamSpecialtyName)
         {
             string jqlString = "project = " + project;
 
             if (!string.IsNullOrEmpty(sprint))
                 jqlString += @" AND Sprint = " +"'" + sprint + "'";
+
+            if (!string.IsNullOrEmpty(teamSpecialtyName))
+                jqlString += @" AND labels = " + "'" + teamSpecialtyName + "'";
 
             return jqlString.Replace("\"", String.Empty);
         }
