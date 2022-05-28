@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "6e11cd02-0cc9-4284-b5d5-a27495ad3dba": {
+      "ProjectGuid": "6e11cd02-0cc9-4284-b5d5-a27495ad3dba",
+      "DisplayName": "JiraAPI",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}
