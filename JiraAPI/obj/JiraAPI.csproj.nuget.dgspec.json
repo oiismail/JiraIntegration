@@ -1,24 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projects\\JiraAPI\\JiraAPI\\JiraAPI.csproj": {}
+    "C:\\Users\\aabedalhaq\\Source\\Repos\\JiraIntegration\\JiraAPI\\JiraAPI.csproj": {}
   },
   "projects": {
-    "C:\\Projects\\JiraAPI\\JiraAPI\\JiraAPI.csproj": {
+    "C:\\Users\\aabedalhaq\\Source\\Repos\\JiraIntegration\\JiraAPI\\JiraAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\JiraAPI\\JiraAPI\\JiraAPI.csproj",
+        "projectUniqueName": "C:\\Users\\aabedalhaq\\Source\\Repos\\JiraIntegration\\JiraAPI\\JiraAPI.csproj",
         "projectName": "JiraAPI",
-        "projectPath": "C:\\Projects\\JiraAPI\\JiraAPI\\JiraAPI.csproj",
-        "packagesPath": "C:\\Users\\Mahmoud Almasri\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\JiraAPI\\JiraAPI\\obj\\",
+        "projectPath": "C:\\Users\\aabedalhaq\\Source\\Repos\\JiraIntegration\\JiraAPI\\JiraAPI.csproj",
+        "packagesPath": "C:\\Users\\aabedalhaq\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\aabedalhaq\\Source\\Repos\\JiraIntegration\\JiraAPI\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Mahmoud Almasri\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Users\\aabedalhaq\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -26,8 +22,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://nuget.telerik.com/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
@@ -76,7 +71,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -3,6 +3,9 @@ using JiraAPI.Model.Common;
 using JiraAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace JiraAPI.Controller
 {
@@ -20,7 +23,7 @@ namespace JiraAPI.Controller
         public IActionResult GetSprintChampiones(string projectName,string sprintName)
         {
             List<UsersModel> userList = new List<UsersModel>();
-            List<Issue> sprintIssues = GetSprintIssues(projectName, sprintName);
+            List<Issue> sprintIssues = GetIssues(projectName, sprintName);
             var issueGroupedByAssigneeUser = sprintIssues
                 .Where(a=>a.AssigneeUser?.DisplayName != "" && a.AssigneeUser?.DisplayName != null)
                 .GroupBy(y => y.AssigneeUser?.DisplayName).ToList();
@@ -44,7 +47,16 @@ namespace JiraAPI.Controller
             return Ok(sprintChampionesList);
         }
 
-        private List<Issue> GetSprintIssues(string projectName, string sprintName = "")
+        [HttpGet("Jira/GetSprintIssues")]
+        public IActionResult GetSprintIssues(string projectName, string sprintName)
+        {
+
+            var sprintIssues = GetIssues(projectName, sprintName).ToList();
+
+            return Ok(sprintIssues);
+        }
+
+        private List<Issue> GetIssues(string projectName, string sprintName = "")
         {
             Jira jiraClient = Jira.CreateRestClient(appConfiguration.JiraURL, appConfiguration.JiraUsername, appConfiguration.JiraToken, new JiraRestClientSettings());
             string jqlString = PrepareJqlbyDates(projectName, sprintName);
