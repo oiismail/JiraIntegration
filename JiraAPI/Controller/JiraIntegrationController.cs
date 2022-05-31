@@ -1,11 +1,7 @@
 ﻿using Atlassian.Jira;
 using JiraAPI.Model.Common;
 using JiraAPI.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace JiraAPI.Controller
 {
@@ -13,11 +9,7 @@ namespace JiraAPI.Controller
     [ApiController]
     public class JiraIntegrationController : ControllerBase
     {
-        AppConfiguration appConfiguration = new AppConfiguration();
-        public JiraIntegrationController()
-        {
-
-        }
+        AppConfiguration AppConfiguration = new AppConfiguration();
 
         [HttpGet("Jira/GetSprintChampiones")]
         public IActionResult GetSprintChampiones(string projectName,string sprintName, string teamSpecialtyName)
@@ -48,17 +40,17 @@ namespace JiraAPI.Controller
         }
 
         [HttpGet("Jira/GetSprintIssues")]
-        public IActionResult GetSprintIssues(string projectName, string sprintName)
+        public async Task<IActionResult> GetSprintIssues(string projectName, string sprintName)
         {
 
-            var sprintIssues = GetIssues(projectName, sprintName).ToList();
+            var sprintIssues = await GetIssuesDetailsList(projectName, sprintName);
 
             return Ok(sprintIssues);
         }
 
         private List<Issue> GetIssues(string projectName, string sprintName = "", string teamSpecialtyName = "")
         {
-            Jira jiraClient = Jira.CreateRestClient(appConfiguration.JiraURL, appConfiguration.JiraUsername, appConfiguration.JiraToken, new JiraRestClientSettings());
+            Jira jiraClient = Jira.CreateRestClient(AppConfiguration.JiraURL, AppConfiguration.JiraUsername, AppConfiguration.JiraToken, new JiraRestClientSettings());
             string jqlString = PrepareJqlbyDates(projectName, sprintName, teamSpecialtyName);
             IssueSearchOptions options = new IssueSearchOptions(jqlString);
             options.StartAt = 0;
@@ -79,6 +71,47 @@ namespace JiraAPI.Controller
                 jqlString += @" AND labels = " + "'" + teamSpecialtyName + "'";
 
             return jqlString.Replace("\"", String.Empty);
+        }
+
+        private async Task<List<IssuesModel>> GetIssuesDetailsList(string projectName, string sprintName = "", string teamSpecialtyName = "")
+        {
+            Jira jiraClient = Jira.CreateRestClient(AppConfiguration.JiraURL, AppConfiguration.JiraUsername, AppConfiguration.JiraToken, new JiraRestClientSettings());
+            string jqlString = PrepareJqlbyDates(projectName, sprintName, teamSpecialtyName);
+            IssueSearchOptions options = new IssueSearchOptions(jqlString);
+            options.StartAt = 0;
+            options.MaxIssuesPerRequest = (await jiraClient.Issues.GetIssuesFromJqlAsync(options)).TotalItems;
+            List<Issue> issuesList = new List<Issue>();
+            List<IssuesModel> issuesModel = new List<IssuesModel>();
+            List<string> notEstimatedIssuesList = new List<string>();
+            IPagedQueryResult<Issue> partialPullRequests = await jiraClient.Issues.GetIssuesFromJqlAsync(options);
+            issuesList.AddRange(partialPullRequests);
+            try
+            {
+                foreach (var issueKey in issuesList.Where(i => i.DueDate != null).Select(x => x.Key))
+                {
+                    var issueFields = await jiraClient.Issues.GetIssueAsync(issueKey.ToString());
+
+                    var issue = new IssuesModel()
+                    {
+                        StartDate = issueFields["Start date"]?.ToString(),
+                        DueDate = issueFields.DueDate?.ToString(),
+                        Assignee = issueFields.AssigneeUser?.DisplayName?.ToString(),
+                        IssueType = issueFields.Type?.Name,
+                        Priority = issueFields.Priority?.Name,
+                        Reporter = issueFields.ReporterUser?.DisplayName,
+                        Sprint = sprintName,
+                        Status = issueFields.Status?.Name,
+
+                    };
+
+                    issuesModel.Add(issue);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            return issuesModel;
         }
     }
 }
