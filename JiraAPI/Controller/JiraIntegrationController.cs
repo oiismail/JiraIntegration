@@ -23,8 +23,7 @@ namespace JiraAPI.Controller
         public IActionResult GetSprintChampiones(string projectName,string sprintName, string teamSpecialtyName)
         {
             List<UsersModel> userList = new List<UsersModel>();
-            List<Issue> sprintIssues = GetSprintIssues(projectName, sprintName, teamSpecialtyName);
-            List<Issue> sprintIssues = GetIssues(projectName, sprintName);
+            List<Issue> sprintIssues = GetIssues(projectName, sprintName, teamSpecialtyName);
             var issueGroupedByAssigneeUser = sprintIssues
                 .Where(a=>a.AssigneeUser?.DisplayName != "" && a.AssigneeUser?.DisplayName != null)
                 .GroupBy(y => y.AssigneeUser?.DisplayName).ToList();
@@ -57,7 +56,7 @@ namespace JiraAPI.Controller
             return Ok(sprintIssues);
         }
 
-        private List<Issue> GetIssues(string projectName, string sprintName = "")
+        private List<Issue> GetIssues(string projectName, string sprintName = "", string teamSpecialtyName = "")
         {
             Jira jiraClient = Jira.CreateRestClient(appConfiguration.JiraURL, appConfiguration.JiraUsername, appConfiguration.JiraToken, new JiraRestClientSettings());
             string jqlString = PrepareJqlbyDates(projectName, sprintName, teamSpecialtyName);
